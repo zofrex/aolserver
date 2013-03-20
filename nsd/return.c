@@ -400,6 +400,7 @@ Ns_ConnSetRequiredHeaders(Ns_Conn *conn, char *newtype, int length)
     Conn *connPtr = (Conn *) conn;
     char *type;
     Ns_DString ds;
+    int status = Ns_ConnGetStatus(conn);
 
     /*
      * Set the standard mime and date headers.
@@ -431,10 +432,10 @@ Ns_ConnSetRequiredHeaders(Ns_Conn *conn, char *newtype, int length)
 	Ns_ConnSetType(conn, newtype);
 	type = Ns_ConnGetType(conn);
     }
-    if (type) {
+    if (type && status != 304) {
 	Ns_ConnSetTypeHeader(conn, type);
     }
-    if (length >= 0) {
+    if (length >= 0 && status != 304) {
 	Ns_ConnSetLengthHeader(conn, length);
     }
     Ns_DStringFree(&ds);
