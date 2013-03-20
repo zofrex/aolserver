@@ -202,7 +202,7 @@ int
 Ns_ConnFlushDirect(Ns_Conn *conn, char *buf, int len, int stream)
 {
     struct iovec iov[4];
-    int i, nwrote, towrite, hlen, ioc;
+    int i, nwrote, towrite, hlen, ioc, status;
     char hdr[100];
 
     /*
@@ -231,7 +231,8 @@ Ns_ConnFlushDirect(Ns_Conn *conn, char *buf, int len, int stream)
 
     ioc = 0;
     towrite = 0;
-    if (!(conn->flags & NS_CONN_SKIPBODY)) {
+    status = Ns_ConnGetStatus(conn);
+    if (!(conn->flags & NS_CONN_SKIPBODY) && status != 304) {
     	if (!(conn->flags & NS_CONN_CHUNK)) {
 	    /*
 	     * Output content without chunking header/trailers.
